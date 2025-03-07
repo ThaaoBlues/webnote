@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <title>Éditeur Markdown et SVG</title>
     <link rel="stylesheet" href="static/css/index.css">
 </head>
@@ -12,13 +15,65 @@
         <div class="title">
             <h1>WebNote - HTML/Markdown paper editor</h1>
         </div>
-        <button class="navbar-button" id="downloadMarkdown">Télécharger Markdown</button>
-        <button class="navbar-button" id="downloadPDF">Télécharger PDF</button>
+        <button class="navbar-button" id="uploadMarkdown">Importer</button>
+        <button class="navbar-button" id="downloadMarkdown">Télécharger</button>
+        <button class="navbar-button" id="downloadPDF">Télécharger en PDF</button>
 
     </div>
     <div class="container" id="mainContainer">
+ 
         <div class="markdown-editor">
-            <textarea id="markdownInput" placeholder="Écrivez votre Markdown/HTML ici..."></textarea>
+
+            <div id="markdownInputContainer">
+                <div class="toolbar">
+                    <button id="importImageButton">Importer une image</button>
+                    <a href="https://github.com/Kernix13/markdown-cheatsheet">Markdown/HTML redaction help</a>
+                </div>
+                <textarea id="markdownInput">
+# Écrivez votre Markdown/HTML ici...
+
+## une table !
+<table style="border: 1px solid black;">
+    <tr style="border: 1px solid black;">
+        <th style="border: 1px solid black;">test1</th>
+        <th style="border: 1px solid black;">test2</th>
+    </tr>
+    <tr style="border: 1px solid black;">
+        <td style="border: 1px solid black;">test1</td>
+        <td style="border: 1px solid black;">test2</td>  
+    </tr>
+</table>
+
+## une image !!! 
+<img src="https://s1.qwant.com/thumbr/474x515/b/d/4cf4c7c4d8b5211a05b4c6c623be79695438fe234ecdc5a2a976c62deb86aa/th.jpg?u=https%3A%2F%2Ftse.mm.bing.net%2Fth%3Fid%3DOIP.AI0TOsapykO9B_hKfEhgoQHaID%26pid%3DApi&q=0&b=1&p=0&a=0">
+<p style="text-align: center;">
+<em>Avec sa légende</em>
+</p>
+## une liste non ordonnée ?
+
+- oui ! 
+- c'est pas mal 
+
+### ordonnée cette fois-ci ?
+
+<ol>
+    <li>
+        oui, mais avec un seul élément parce que j'ai envie
+    </li>
+</ol>
+
+## et enfin, un paragraphe centré !!
+<p style="text-align: center;">
+je suis centré
+</p>
+
+
+> Noubliez pas que vous pouvez modifer le style css de tout les éléments pour avoir une meilleur mise en forme ;)
+
+
+                </textarea>
+            </div>
+            
             <div id="markdownOutput" contenteditable="false"></div>
         </div>
         <div class="svg-editor">
@@ -37,9 +92,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="static/js/index.js"></script>
 </body>
 </html>

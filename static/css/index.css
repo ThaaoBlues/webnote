@@ -28,6 +28,8 @@ body, html {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+
+
 .expanded {
     display: flex;
     flex-direction: row;
@@ -43,13 +45,22 @@ body, html {
     border-radius: 10px;
 }
 
+#markdownInputContainer{
+    display: flex;
+    flex-direction: column;
+}
+
 #markdownInput {
+    height: max-content;
+    min-height: 30vh;
+    min-width: 40vw;
     flex: 1;
     padding: 10px;
     border: none;
     resize: none;
     font-family: Arial, sans-serif;
     transition: transform 0.3s ease-in-out;
+    overflow-y: scroll;
 }
 
 #markdownOutput {
@@ -58,6 +69,8 @@ body, html {
     border-top: 1px solid #ccc;
     overflow-y: auto;
     background-color: #fff;
+    overflow-y: scroll;    
+
 }
 
 #drawingCanvas {

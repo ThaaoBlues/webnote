@@ -16,7 +16,11 @@ const svgEditor = document.querySelector('.svg-editor');
 
 
 
+// first render with default markdown sheet
+window.addEventListener("DOMContentLoaded",function(){
+    updateMarkdownOutput();
 
+})
 let isDrawing = false;
 let isErasing = false;
 let isPanning = false;
@@ -220,7 +224,11 @@ markdownInput.addEventListener('focus', () =>{
 
 document.addEventListener('click', (event) => {
     console.log(event);
-    if (!(event.target.classList.contains('expanded') || event.target.parentElement.classList.contains("expanded"))){
+    if (!(
+        event.target.classList.contains('expanded') || 
+        event.target.parentElement.classList.contains("expanded") ||
+        event.target.parentElement.parentElement.classList.contains("expanded")
+    )){
         collapseElement();
     }
 });
