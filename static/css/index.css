@@ -28,8 +28,8 @@ body, html {
 
 .expanded {
     position: absolute;
-    width: 70vw !important;
-    height: 70vh !important;
+    width: 80vw !important;
+    height: 90vh !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1.05);
@@ -62,6 +62,11 @@ body, html {
     cursor: crosshair;
     height: inherit;
     transition: transform 0.3s ease-in-out;
+}
+
+#drawingCanvasContainer{
+    overflow-x: scroll;
+    overflow-y: scroll;
 }
 
 .toolbar {
