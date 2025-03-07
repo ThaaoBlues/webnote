@@ -9,6 +9,7 @@ body, html {
 }
 
 .container {
+    margin-top: 5vh;
     display: flex;
     width: 95vw;
     height: 90vh;
@@ -19,6 +20,7 @@ body, html {
 }
 
 .markdown-editor, .svg-editor {
+    border-radius: 10px;
     width: 50vw;
     height: inherit;
     display: flex;
@@ -27,6 +29,8 @@ body, html {
 }
 
 .expanded {
+    display: flex;
+    flex-direction: row;
     position: absolute;
     width: 80vw !important;
     height: 90vh !important;
@@ -83,21 +87,27 @@ body, html {
     cursor: pointer;
 }
 
-.download-buttons {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 10px;
-    margin-bottom: 3vh;
-}
-
-.download-buttons button {
+.navbar-button {
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
+    top: 8px;
+    margin-bottom: 3vh;
+    margin-right: 1vw;
 }
 
 #colorPicker {
     margin-top: 8px;
+}
+
+.title{
+    display: inline-block;
+    margin-right: 1vw;
+}
+
+.navbar{
+    top: 0px;
+    position: absolute;
+    margin-bottom: 5vh;
+    z-index: 0;
 }

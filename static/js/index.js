@@ -261,7 +261,7 @@ function insertSVG() {
     const svgString = serializer.serializeToString(svg);
     const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
 
-    const markdownImage = `![Dessin](${svgDataUrl})`;
+    const markdownImage = `<img alt="figure" src="${svgDataUrl}" width="595pt"> `;
     markdownInput.value += '\n' + markdownImage;
     updateMarkdownOutput();
 }

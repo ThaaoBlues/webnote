@@ -7,9 +7,18 @@
     <link rel="stylesheet" href="static/css/index.css">
 </head>
 <body>
+
+    <div class="navbar">
+        <div class="title">
+            <h1>WebNote - HTML/Markdown paper editor</h1>
+        </div>
+        <button class="navbar-button" id="downloadMarkdown">Télécharger Markdown</button>
+        <button class="navbar-button" id="downloadPDF">Télécharger PDF</button>
+
+    </div>
     <div class="container" id="mainContainer">
         <div class="markdown-editor">
-            <textarea id="markdownInput" placeholder="Écrivez votre Markdown ici..."></textarea>
+            <textarea id="markdownInput" placeholder="Écrivez votre Markdown/HTML ici..."></textarea>
             <div id="markdownOutput" contenteditable="false"></div>
         </div>
         <div class="svg-editor">
@@ -27,10 +36,7 @@
 
         </div>
     </div>
-    <div class="download-buttons">
-        <button id="downloadMarkdown">Télécharger Markdown</button>
-        <button id="downloadPDF">Télécharger PDF</button>
-    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
