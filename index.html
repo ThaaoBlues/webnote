@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Éditeur Markdown et SVG</title>
+    <link rel="stylesheet" href="static/css/index.css">
+</head>
+<body>
+    <div class="container">
+        <div class="markdown-editor">
+            <textarea id="markdownInput" placeholder="Écrivez votre Markdown ici..."></textarea>
+            <div id="markdownOutput" contenteditable="false"></div>
+        </div>
+        <div class="svg-editor">
+            <div class="toolbar">
+                <button id="eraserButton">Gomme</button>
+                <button id="clearButton">Effacer tout</button>
+                <input type="range" id="radiusPicker" min="1" max="20" value="5">
+                <input type="color" id="colorPicker" value="#000000">
+            </div>
+            <canvas id="drawingCanvas"></canvas>
+            <button id="insertButton">Insérer le dessin</button>
+        </div>
+    </div>
+    <div class="download-buttons">
+        <button id="downloadMarkdown">Télécharger Markdown</button>
+        <button id="downloadPDF">Télécharger PDF</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="static/js/index.js"></script>
+</body>
+</html>
