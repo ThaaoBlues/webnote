@@ -7,8 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://www.geogebra.org/apps/deployggb.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <title>Éditeur Markdown et SVG</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>    <title>Éditeur Markdown et SVG</title>
     <link rel="stylesheet" href="static/css/index.css">
 </head>
 <body>
@@ -20,12 +19,13 @@
         <button class="navbar-button" id="uploadMarkdown">Importer</button>
         <button class="navbar-button" id="downloadMarkdown">Télécharger</button>
         <button class="navbar-button" id="downloadPDF">Télécharger en PDF</button>
+
     </div>
     <div class="container" id="mainContainer">
-
+ 
         <div class="markdown-editor" id="markdownEditor">
 
-            <div id="markdownInputContainer" class="editor-overlay">
+            <div id="markdownInputContainer">
                 <div class="toolbar">
                     <button id="importImageButton">Importer des images</button>
                     <input type="file" accept="image/*" id="fileInput" style="display: none;" multiple>
@@ -45,20 +45,22 @@
     </tr>
     <tr>
         <td style="border: 1px solid black;padding: 10px,20px;">test1</td>
-        <td style="border: 1px solid black;padding: 10px,20px;">test2</td>
+        <td style="border: 1px solid black;padding: 10px,20px;">test2</td>  
     </tr>
 </table>
 
-## une image !!!
+
+## une image !!! 
 <img src="https://s1.qwant.com/thumbr/474x515/b/d/4cf4c7c4d8b5211a05b4c6c623be79695438fe234ecdc5a2a976c62deb86aa/th.jpg?u=https%3A%2F%2Ftse.mm.bing.net%2Fth%3Fid%3DOIP.AI0TOsapykO9B_hKfEhgoQHaID%26pid%3DApi&q=0&b=1&p=0&a=0">
 <p style="text-align: center;">
 <em>Avec sa légende</em>
 </p>
 
+
 ## une liste non ordonnée ?
 
-- oui !
-- c'est pas mal
+- oui ! 
+- c'est pas mal 
 
 ### ordonnée cette fois-ci ?
 
@@ -73,12 +75,13 @@
 je suis centré
 </p>
 
+
 > Noubliez pas que vous pouvez modifer le style css de tout les éléments pour avoir une meilleur mise en forme ;)
 
-                </textarea>
-                <div id="displayContent" class="content" contenteditable="true"></div>
-            </div>
 
+                </textarea>
+            </div>
+            
             <div id="markdownOutput" contenteditable="false"></div>
         </div>
         <div class="svg-editor">
@@ -93,11 +96,15 @@ je suis centré
                 <canvas id="drawingCanvas"></canvas>
             </div>
             <button id="insertButton">Insérer le dessin</button>
+
         </div>
 
     </div>
 
-    <!--<canvas id="canvasImageSrcTransformation" style=""></canvas>-->
+
+    <!--<div id="ggb-element"></div>
+    <button id="export-svg-btn">Export Geogebra sketch to SVG</button>-->
+    <canvas id="canvasImageSrcTransformation" style=""></canvas>
 
     <input type="file" id="fileInput" style="display: none;">
 

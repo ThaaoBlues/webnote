@@ -1,0 +1,14 @@
+{
+    
+    "tables":{
+        "basic":"basic.html"
+    },
+    "text":{
+        "parapgraph":"paragraph.html",
+        "centered parapgraph":"centered_paragraph.html",
+        "caption":"caption.html"
+    },
+    "images":{
+        "basic":"basic.html"
+    }
+}
