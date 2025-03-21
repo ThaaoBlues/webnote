@@ -481,8 +481,14 @@ function generateMenu(componentsDB) {
     typeDiv.onmouseover = () => showSubmenu(typeDiv);
     menu.appendChild(typeDiv);
 
-    menu.onmouseleave = () => hideSubmenu(typeDiv);
+    menu.onmouseleave = () => {
+        // hide all submenus
+        hideSubmenu(typeDiv);
+        menu.querySelectorAll(".menu-item").forEach(element => {
+            hideSubmenu(element);
+        });
 
+    }
     const componentTypeSubmenu = document.createElement('div');
     componentTypeSubmenu.classList.add('submenu');
     typeDiv.appendChild(componentTypeSubmenu);
@@ -493,8 +499,7 @@ function generateMenu(componentsDB) {
             const nameDiv = document.createElement('div');
             nameDiv.classList.add('menu-item');
             nameDiv.innerText = componentType;
-            nameDiv.onmouseover = () => showSubmenu(nameDiv);
-            nameDiv.onmouseout = () => hideSubmenu(nameDiv);
+            nameDiv.onclick = () => showSubmenu(nameDiv);
             componentTypeSubmenu.appendChild(nameDiv);
 
             const componentSubmenu = document.createElement('div');
