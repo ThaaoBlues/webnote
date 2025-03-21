@@ -295,7 +295,7 @@ function removeExpandedClass(element){
 document.addEventListener('keydown',(event)=>{
 
 
-    if(event.shiftKey && (svgEditor.style.display === "none")){
+    if(event.shiftKey && event.altKey && (svgEditor.style.display === "none")){
         console.log("displaying drawing canvas");
         hideMarkdownEditor();
         displayDrawingCanvas();
@@ -586,6 +586,23 @@ function restoreImageSrc(html, originalHtml) {
     console.log(originalImages);
 
     let imgCount = doc.querySelectorAll("img").length;
+    // in case we write the image tag by hand, to let us write the source 
+    // before notifying the rest of the process
+    let nonFinishedImgCount = 0;
+    doc.querySelectorAll("img").forEach(element => {
+
+        /*
+        TODO : ça détécte quand meme toutes les nvelles balises,
+        faire en sorte que le check de src fonctionne
+        */
+        if(!(element.src === "" || element.src == NaN) && !element.classList.contains("source-hidden-for-convenience")){
+            console.log("NVELLE IMAGE");
+            nonFinishedImgCount ++;
+        }
+    });
+    imgCount = imgCount - nonFinishedImgCount;
+
+
     placeholders.forEach((placeholder, index) => {
         // do not edit newly inserted images
         //console.log(`${placeholder.id} === ${index} ?`)
