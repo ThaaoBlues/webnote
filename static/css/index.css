@@ -32,9 +32,10 @@ body, html {
 
 .expanded {
     display: flex;
-    position: absolute;
-    width: 80vw !important;
-    height: 90vh !important;
+    position: fixed;
+    margin-top: 1vh;
+    width: 90vw !important;
+    height: 82vh !important;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(1.05);
@@ -49,10 +50,10 @@ body, html {
     flex-direction: column;
 }
 
-#markdownInput {
+#displayContent {
     height: max-content;
     min-height: 30vh;
-    min-width: 40vw;
+    min-width: 50vw;
     flex: 1;
     padding: 10px;
     border: none;
@@ -61,14 +62,13 @@ body, html {
     transition: transform 0.3s ease-in-out;
     overflow-y: scroll;
 }
-
 #markdownOutput {
     flex: 1;
     padding: 10px;
     border-top: 1px solid #ccc;
-    overflow-y: auto;
     background-color: #fff;
     overflow-y: scroll;    
+    overflow-x: scroll;
 
 }
 
@@ -78,6 +78,7 @@ body, html {
     cursor: crosshair;
     height: inherit;
     transition: transform 0.3s ease-in-out;
+    border-radius: 10px;
 }
 
 #drawingCanvasContainer{
@@ -91,12 +92,18 @@ body, html {
     padding: 10px;
     background-color: #fff;
     border-bottom: 1px solid #ccc;
+    border-radius: 10px;
 }
 
 #insertButton, #eraserButton, #clearButton {
-    padding: 10px;
+    padding: 15px;
     font-size: 16px;
     cursor: pointer;
+}
+
+#insertButton{
+    background-color: cyan;
+
 }
 
 .navbar-button {
@@ -104,7 +111,6 @@ body, html {
     font-size: 16px;
     cursor: pointer;
     top: 8px;
-    margin-bottom: 3vh;
     margin-right: 1vw;
 }
 
@@ -120,8 +126,11 @@ body, html {
 .navbar{
     top: 0px;
     position: absolute;
-    margin-bottom: 5vh;
-    z-index: 0;
+    z-index: 10;
+    background-color: #888;
+    border-radius: 5px;
+    padding: 5px;
+
 }
 
 

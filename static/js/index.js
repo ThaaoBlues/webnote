@@ -41,6 +41,9 @@ window.addEventListener("DOMContentLoaded",function(){
         breaks : true
     });
 
+    hideDrawingCanvas();
+    displayMarkdownEditor();
+
 })
 let isDrawing = false;
 let isErasing = false;
@@ -182,15 +185,6 @@ function updateMarkdownOutput() {
 }
 
 
-// not used anymore as we have the overlay
-/*markdownInput.addEventListener('input', function(){
-    updateMarkdownOutput();
-    // update overlay editor content
-    const content = markdownInput.value;
-    overlayEditor.innerHTML = hideImageSrc(content);
-});*/
-
-
 
 downloadMarkdown.addEventListener('click', () => {
     const markdownText = markdownInput.value;
@@ -263,48 +257,11 @@ downloadPDF.addEventListener('click', () => {
 /* zoom sur l'éditeur quand on écris/dessine */
 
 // state of both markdown editor and canvas editor
-let isExpanded = false;
-let ignoreClick = false;
+
 
 function expandElement(element) {
-    if (!isExpanded) {
         element.classList.add('expanded');
-        isExpanded = true;
-        ignoreClick = true;
-        setTimeout(() => { ignoreClick = false; }, 200); // Small delay to prevent immediate collapse
-    }
 }
-
-function collapseElement() {
-    if (isExpanded && !ignoreClick) {
-        markdownEditor.classList.remove('expanded');
-        markdownEditor.style = "flex-direction:column;"
-        svgEditor.classList.remove('expanded');
-        drawingCanvas.classList.remove("expanded")
-        markdownInput.classList.remove("expanded");
-        markdownOutput.classList.remove("expanded");
-
-        // delay to prevent having expansion of an element while clicking to collapse another
-        setTimeout(() => {
-            isExpanded = false; 
-            // prevent focus to be made on markdown editor
-            // and by so having to unfocus and refocus it to zoom in it
-            // if we are coming from drawing canvas
-            markdownInput.blur();
-            }, 200);    
-    }
-}
-
-
-overlayEditor.addEventListener('focus', () =>{
-    expandElement(markdownEditor);
-    // show the editor and output side by side in expanded view
-    markdownEditor.style = "flex-direction:row;"
-} );
-
-svgEditor.addEventListener('click', () => {
-    expandElement(svgEditor);
-});
 
 function checkIfnotChildOfExpanded(element){
 
@@ -322,19 +279,64 @@ function checkIfnotChildOfExpanded(element){
 
 }
 
-document.addEventListener('click', (event) => {
-    if (!checkIfnotChildOfExpanded(event.target)){
+function removeExpandedClass(element){
+    console.log("removing expanded class");
+    if(element.classList.contains("expanded")){
+        element.classList.remove("expanded");
+    }else{
+        if(element.parentElement != null){
+            removeExpandedClass(element.parentElement);
+        }
+    }
+}
 
-        collapseElement();
+
+// trigger drawing canvas on shift+draw
+document.addEventListener('keydown',(event)=>{
+
+
+    if(event.shiftKey && (svgEditor.style.display === "none")){
+        console.log("displaying drawing canvas");
+        hideMarkdownEditor();
+        displayDrawingCanvas();
     }
 });
 
+function displayDrawingCanvas(){
+    // collapse markdown editor
+    removeExpandedClass(markdownEditor);
+    svgEditor.removeAttribute("hidden");
+    svgEditor.style = "";
+    expandElement(svgEditor);
+}
 
+function displayMarkdownEditor(){
+    markdownEditor.style = "flex-direction:row;"
+    svgEditor.removeAttribute("hidden");
+    expandElement(markdownEditor);
+    
+}
+
+function hideDrawingCanvas(){
+    removeExpandedClass(svgEditor);
+    svgEditor.setAttribute("hidden",true);
+    svgEditor.style.display = "none";
+}
+function hideMarkdownEditor(){
+    markdownEditor.style = "flex-direction:column;"
+    markdownEditor.setAttribute("hidden",true)
+    removeExpandedClass(markdownEditor);
+}
 
 // svg insertion in markdown
 insertButton.addEventListener('click', insertSVG);
 
 function insertSVG() {
+    hideDrawingCanvas();
+    displayMarkdownEditor();
+
+
+
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', drawingCanvas.width);
     svg.setAttribute('height', drawingCanvas.height);
@@ -368,6 +370,9 @@ function insertSVG() {
     const markdownImage = `<img alt="figure" src="${svgDataUrl}" width="595pt"> `;
     markdownInput.value += '\n' + markdownImage;
     updateMarkdownOutput();
+
+    // as we added the svg inside the real editor and not displayed one
+    syncOverlayEditor();
 }
 
 
@@ -604,7 +609,10 @@ function restoreImageSrc(html, originalHtml) {
     return [doc.body.innerHTML,imgCount != originalImages.length];
 }
 
+function syncOverlayEditor(){
+    overlayEditor.textContent = hideImageSrc(markdownInput.value);
 
+}
 function initOverlayEditor(){
 
     // Sync content from display to textarea on input
@@ -617,12 +625,12 @@ function initOverlayEditor(){
         updateMarkdownOutput();
 
         if(newSourcesToHide){
-            overlayEditor.textContent = hideImageSrc(markdownInput.value);
+            syncOverlayEditor();
         }
     });
 
     // Initial sync
-    overlayEditor.textContent = hideImageSrc(markdownInput.value);
+    syncOverlayEditor();
 }
 
 
