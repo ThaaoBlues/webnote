@@ -400,6 +400,7 @@ function handleFileSelect(event) {
                 const markdownInput = document.getElementById('markdownInput');
                 markdownInput.value += '\n' + markdownImage;
                 updateMarkdownOutput();
+                syncOverlayEditor();
             };
             reader.readAsDataURL(file);
         } else {
@@ -553,6 +554,7 @@ async function fetchComponent(url) {
             const content = await response.text();
             markdownInput.value += '\n\n' + content;
             updateMarkdownOutput();
+            syncOverlayEditor();
         } else {
             console.error('Failed to fetch component:', response.statusText);
         }
@@ -588,21 +590,24 @@ function restoreImageSrc(html, originalHtml) {
     const originalDoc = parser.parseFromString(originalHtml, 'text/html');
     const placeholders = doc.querySelectorAll('.source-hidden-for-convenience');
     const originalImages = originalDoc.querySelectorAll('img');
-    console.log(originalImages);
 
-    let imgCount = doc.querySelectorAll("img").length;
+    let imgCount = originalDoc.querySelectorAll("img").length;
     // in case we write the image tag by hand, to let us write the source 
     // before notifying the rest of the process
     let nonFinishedImgCount = 0;
     doc.querySelectorAll("img").forEach(element => {
 
         /*
-        TODO : ça détécte quand meme toutes les nvelles balises,
-        faire en sorte que le check de src fonctionne
+            va détecter la nouvelle image uniquement 
+            si elle possède une source non vide
         */
-        if(!(element.src === "" || element.src == NaN) && !element.classList.contains("source-hidden-for-convenience")){
-            console.log("NVELLE IMAGE");
-            nonFinishedImgCount ++;
+        if(element.getAttribute("src") && !element.classList.contains("source-hidden-for-convenience")){
+            // let time to actually paste the source
+            if(element.getAttribute("src") !== ""){
+                console.log("NVELLE IMAGE");
+                nonFinishedImgCount ++;
+            }
+
         }
     });
     imgCount = imgCount - nonFinishedImgCount;
@@ -614,7 +619,13 @@ function restoreImageSrc(html, originalHtml) {
         if (placeholder.id === `${index}`) {
             //console.log("oui");
             const img = document.createElement('img');
-            img.setAttribute('src', originalImages[index].getAttribute('src'));
+            if(!placeholder.getAttribute("src")){
+                img.setAttribute('src', originalImages[index].getAttribute('src'));
+
+            }else{
+                console.log("new source specified for image !");
+                img.setAttribute('src', placeholder.getAttribute("src"));
+            }
             doc.body.replaceChild(img, placeholder);
         }
     });
@@ -643,7 +654,6 @@ function initOverlayEditor(){
         const [new_content, newSourcesToHide] = restoreImageSrc(overlayEditor.innerText,og_content);
         markdownInput.value = new_content;
         
-        console.log(new_content);
         updateMarkdownOutput();
 
         if(newSourcesToHide){
@@ -654,12 +664,3 @@ function initOverlayEditor(){
     // Initial sync
     syncOverlayEditor();
 }
-
-
-/* 
-PB : 
-- la maj de l'output est chelou, ça ne met plus en forme correctement (wtf ?)
-- il faut overlayEditor.textContent = hideImageSrc(markdownInput.value);
- quand on détecte une nouvelle image
-- relou, le newsourcestouhide se trigger des qu'on ecris img, pas le temps de mettre la source
-*/

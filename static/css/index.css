@@ -60,6 +60,7 @@ body, html {
     font-family: Arial, sans-serif;
     transition: transform 0.3s ease-in-out;
     overflow-y: scroll;
+    white-space:pre-wrap;
 }
 #markdownOutput {
     flex: 1;
@@ -169,6 +170,8 @@ body, html {
 /* index.css */
 .editor-overlay {
     position: relative;
+    overflow-x:hidden;
+    max-width: 50vw;
 }
 
 .editor-overlay textarea {
