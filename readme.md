@@ -13,14 +13,10 @@ It has bugs and is hideous but it kind of works. For 10min of prompting an AI it
 
 TOUDOU :
 - fix le cassage des \llbracket et \rrbracket
-- shapes toolbox
+- ne pas recompiler le mathjax à chaque char tapé, essayer de trouver une combine
 - utilise le modèle d'ocr ou un llvm pour changer les images svg à la main en truc propre ?
-- finir components toolbox, faire en sorte que le menu s'étende par dessus le reste
-- faire fonctionner géogebra d'une manière ou d'un autre
 - connect an svg marketplace to import cool drawings available on internet
 - mettre un lien vers geogebra
 - ability to import svg files
-- cacher les images dans la textview
 - réparer la génération de pdf
-- quand on aggrandis la zone de dessin, la reconstruction des path ne lève pas le stylo entre chaque
 - fix le code qui transforme les images depuis des url http en base64
