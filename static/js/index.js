@@ -13,7 +13,7 @@ const mainContainer = document.getElementById('mainContainer');
 const expandCanvasButton = document.getElementById('expandCanvasButton');
 const markdownEditor = document.querySelector('.markdown-editor');
 const svgEditor = document.querySelector('.svg-editor');
-const overlayEditor = document.getElementById('displayContent');
+const overlayEditor = document.getElementById('interactiveEditor');
 
 
 
@@ -181,7 +181,34 @@ function stopDrawing() {
 
 function updateMarkdownOutput() {
     const markdownText = markdownInput.value;
-    markdownOutput.innerHTML = marked.parse(markdownText);
+
+  // Regular expression to match LaTeX expressions with $...$ and \(...\) syntax
+  const latexRegex = /\$([\s\S]+?)\$|\\\([\s\S]+?\\\)|\\\[([\s\S]+?)\\\]|\\begin\{([\s\S]+?)\}[\s\S]*?\\end\{([\s\S]+?)\}/g;
+
+  // Function to escape LaTeX expressions
+  const escapeLaTeX = (match) => {
+    // Replace underscores with a temporary placeholder
+    return match.replace(/_/g, 'xXUNDERSCOREXx');
+  };
+
+  // Escape LaTeX expressions in the Markdown text
+  var escapedMarkdownText = markdownText.replace(latexRegex, escapeLaTeX);
+
+  // also escape inline \( \) delimiters
+  escapedMarkdownText = escapedMarkdownText.replace(/\\/g, '\\\\');
+ 
+
+  // Render Markdown to HTML
+  const htmlContent = marked.parse(escapedMarkdownText);
+
+  // Restore underscores in LaTeX expressions
+  const restoredHtmlContent = htmlContent.replace(/xXUNDERSCOREXx/g, '_');
+
+  // Set the inner HTML of the output element
+  markdownOutput.innerHTML = restoredHtmlContent;
+
+  // Render MathJax
+  MathJax.typesetPromise([markdownOutput]).catch((err) => console.log('Typeset failed:', err));
 }
 
 
@@ -461,7 +488,7 @@ function initGGBApplet(){
 
 async function fetchComponentsDB() {
     try {
-        const response = await fetch('/static/templates/components_db.json');
+        const response = await fetch('static/templates/components_db.json');
         if (response.ok) {
             const componentsDB = await response.json();
             generateMenu(componentsDB);
@@ -649,7 +676,7 @@ function syncOverlayEditor(){
 function initOverlayEditor(){
 
     // Sync content from display to textarea on input
-    displayContent.addEventListener('input', () => {
+    overlayEditor.addEventListener('input', () => {
         const og_content = markdownInput.value;
         const [new_content, newSourcesToHide] = restoreImageSrc(overlayEditor.innerText,og_content);
         markdownInput.value = new_content;
@@ -664,3 +691,88 @@ function initOverlayEditor(){
     // Initial sync
     syncOverlayEditor();
 }
+
+function insertAtCursor(myField, myValue) {
+    //IE support
+    if (document.selection) {
+        myField.focus();
+        const sel = document.selection.createRange();
+        sel.text = myValue;
+    }
+    //MOZILLA and others
+    else if (myField.selectionStart || myField.selectionStart == '0') {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        myField.innerText = myField.innerText.substring(0, startPos)
+            + myValue
+            + myField.innerText.substring(endPos, myField.value.length);
+    } else {
+        myField.innerText += myValue;
+    }
+}
+
+
+function insertAroundSelection(myField, addBeforeSelection,addAfterSelection) {
+    //IE support
+    if (document.selection) {
+        myField.focus();
+        const sel = document.selection.createRange();
+        sel.text = myValue;
+    }
+    //MOZILLA and others
+    else if (myField.selectionStart || myField.selectionStart == '0') {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        myField.innerText = myField.innerText.substring(0, startPos);
+            + addBeforeSelection
+            + myField.innerText.substring(startPos,endPos);
+            + addAfterSelection
+            + myField.innerText.substring(endPos,myField.value.length);
+    } else {
+        myField.innerText += addAfterSelection+ addAfterSelection;
+    }
+}
+
+
+/*
+    popup menu that pops up when we highlight text in the interactive editor 
+*/
+
+const contextMenu = document.getElementById('textHighlighContextMenu');
+const textHighlighcolorPicker = document.getElementById('textHighlighcolorPicker');
+const correctionOffset = 150;
+overlayEditor.addEventListener('mouseup', function(event) {
+    const selection = window.getSelection();
+    if (selection.toString().length > 0) {
+        const range = selection.getRangeAt(0);
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = `${event.clientX}px`;
+        contextMenu.style.top = `${ event.clientY - correctionOffset - window.scrollY - contextMenu.offsetHeight}px`;
+    } else {
+        contextMenu.style.display = 'none';
+    }
+});
+
+document.addEventListener('click', function(event) {
+    if (!contextMenu.contains(event.target) && event.target !== overlayEditor) {
+        contextMenu.style.display = 'none';
+    }
+});
+
+document.querySelectorAll('.context-menu button').forEach(button => {
+    button.addEventListener('click', function(event) {
+        if (event.target.parentElement.getAttribute("choice-id") === "3") {
+            textHighlighcolorPicker.click();
+        } else {
+            // Ajoutez ici les callbacks pour les autres boutons si nécessaire
+            console.log(`Action: ${event.target.title}`);
+        }
+    });
+});
+
+textHighlighcolorPicker.addEventListener('input', function(event) {
+    const color = event.target.value;
+    console.log(color);
+    insertAroundSelection(overlayEditor,`<font color="${color}">`,"</font>");
+    contextMenu.style.display = 'none';
+});
