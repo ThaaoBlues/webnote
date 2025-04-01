@@ -555,6 +555,10 @@ function generateMenu(componentsDB) {
             toggleSubmenu(typeDiv);
         }
     }
+
+
+    // originally hide the menu
+    toggleSubmenu(typeDiv);
 }
 
 function toggleSubmenu(menuItem) {
