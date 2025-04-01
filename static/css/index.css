@@ -225,3 +225,13 @@ body, html {
 .context-menu button:hover {
     color: #007BFF;
 }
+
+#contextMenuColorPickerContainer{
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+#textHighlighcolorPickerSubmitButton{
+    border: 1px solid #000;
+}

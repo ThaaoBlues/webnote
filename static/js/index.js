@@ -20,7 +20,6 @@ const overlayEditor = document.getElementById('interactiveEditor');
 
 // first render with default markdown sheet
 window.addEventListener("DOMContentLoaded",function(){
-    updateMarkdownOutput();
 
     // geogebra api initialisation
     //initGGBApplet()
@@ -43,6 +42,9 @@ window.addEventListener("DOMContentLoaded",function(){
 
     hideDrawingCanvas();
     displayMarkdownEditor();
+
+    updateMarkdownOutput();
+
 
 })
 let isDrawing = false;
@@ -179,36 +181,38 @@ function stopDrawing() {
     ctx.globalCompositeOperation = 'source-over';
 }
 
-function updateMarkdownOutput() {
+function updateMarkdownOutput(renderLatex=true) {
     const markdownText = markdownInput.value;
 
-  // Regular expression to match LaTeX expressions with $...$ and \(...\) syntax
-  const latexRegex = /\$([\s\S]+?)\$|\\\([\s\S]+?\\\)|\\\[([\s\S]+?)\\\]|\\begin\{([\s\S]+?)\}[\s\S]*?\\end\{([\s\S]+?)\}/g;
+    // Regular expression to match LaTeX expressions with $...$, \(...\) and \[\] syntax
+    const latexRegex = /\$([\s\S]+?)\$|\\\([\s\S]+?\\\)|\\\[([\s\S]+?)\\\]|\\begin\{([\s\S]+?)\}[\s\S]*?\\end\{([\s\S]+?)\}/g;
 
-  // Function to escape LaTeX expressions
-  const escapeLaTeX = (match) => {
+    // Function to escape LaTeX expressions
+    const escapeLaTeX = (match) => {
     // Replace underscores with a temporary placeholder
     return match.replace(/_/g, 'xXUNDERSCOREXx');
-  };
+    };
 
-  // Escape LaTeX expressions in the Markdown text
-  var escapedMarkdownText = markdownText.replace(latexRegex, escapeLaTeX);
+    // Escape LaTeX expressions in the Markdown text
+    var escapedMarkdownText = markdownText.replace(latexRegex, escapeLaTeX);
 
-  // also escape inline \( \) delimiters
-  escapedMarkdownText = escapedMarkdownText.replace(/\\/g, '\\\\');
- 
+    // also escape inline \( \) delimiters
+    escapedMarkdownText = escapedMarkdownText.replace(/\\/g, '\\\\');
 
-  // Render Markdown to HTML
-  const htmlContent = marked.parse(escapedMarkdownText);
 
-  // Restore underscores in LaTeX expressions
-  const restoredHtmlContent = htmlContent.replace(/xXUNDERSCOREXx/g, '_');
+    // Render Markdown to HTML
+    const htmlContent = marked.parse(escapedMarkdownText);
 
-  // Set the inner HTML of the output element
-  markdownOutput.innerHTML = restoredHtmlContent;
+    // Restore underscores in LaTeX expressions
+    const restoredHtmlContent = htmlContent.replace(/xXUNDERSCOREXx/g, '_');
 
-  // Render MathJax
-  MathJax.typesetPromise([markdownOutput]).catch((err) => console.log('Typeset failed:', err));
+    // Set the inner HTML of the output element
+    markdownOutput.innerHTML = restoredHtmlContent;
+
+    // Render MathJax
+    MathJax.typesetPromise([markdownOutput]).catch((err) => console.log('Typeset failed:', err));
+
+
 }
 
 
@@ -675,62 +679,57 @@ function syncOverlayEditor(){
 }
 function initOverlayEditor(){
 
+    // max rate of updates to 1 per 5s
+    let pendingUpdate = false;
+    const UPDATE_RATE = 5000;
+
     // Sync content from display to textarea on input
     overlayEditor.addEventListener('input', () => {
         const og_content = markdownInput.value;
         const [new_content, newSourcesToHide] = restoreImageSrc(overlayEditor.innerText,og_content);
         markdownInput.value = new_content;
         
-        updateMarkdownOutput();
+        // max rate of updates to 1 per 5s
+        if(!pendingUpdate){
 
-        if(newSourcesToHide){
-            syncOverlayEditor();
+            pendingUpdate = true;
+            setTimeout(function(){
+
+                console.log("SYNC");
+                updateMarkdownOutput();
+
+                if(newSourcesToHide){
+                    syncOverlayEditor();
+                }
+
+                pendingUpdate = false;
+            },UPDATE_RATE);
         }
+
     });
 
     // Initial sync
     syncOverlayEditor();
 }
 
-function insertAtCursor(myField, myValue) {
-    //IE support
-    if (document.selection) {
-        myField.focus();
-        const sel = document.selection.createRange();
-        sel.text = myValue;
-    }
-    //MOZILLA and others
-    else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        myField.innerText = myField.innerText.substring(0, startPos)
-            + myValue
-            + myField.innerText.substring(endPos, myField.value.length);
-    } else {
-        myField.innerText += myValue;
-    }
-}
 
 
 function insertAroundSelection(myField, addBeforeSelection,addAfterSelection) {
-    //IE support
-    if (document.selection) {
-        myField.focus();
-        const sel = document.selection.createRange();
-        sel.text = myValue;
-    }
-    //MOZILLA and others
-    else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        myField.innerText = myField.innerText.substring(0, startPos);
-            + addBeforeSelection
-            + myField.innerText.substring(startPos,endPos);
-            + addAfterSelection
-            + myField.innerText.substring(endPos,myField.value.length);
-    } else {
-        myField.innerText += addAfterSelection+ addAfterSelection;
-    }
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+
+
+    // Créer des nœuds de texte pour le texte à insérer
+    const beforeNode = document.createTextNode(addBeforeSelection);
+    const afterNode = document.createTextNode(addAfterSelection);
+
+    // Insérer le texte avant la sélection
+    range.insertNode(beforeNode);
+
+    // Insérer le texte après la sélection
+    range.collapse(false);
+    range.insertNode(afterNode);
+
 }
 
 
@@ -740,6 +739,9 @@ function insertAroundSelection(myField, addBeforeSelection,addAfterSelection) {
 
 const contextMenu = document.getElementById('textHighlighContextMenu');
 const textHighlighcolorPicker = document.getElementById('textHighlighcolorPicker');
+const contextMenuColorPickerContainer = document.getElementById('contextMenuColorPickerContainer');
+const textHighlighcolorPickerSubmitButton = document.getElementById('textHighlighcolorPickerSubmitButton');
+
 const correctionOffset = 150;
 overlayEditor.addEventListener('mouseup', function(event) {
     const selection = window.getSelection();
@@ -761,18 +763,44 @@ document.addEventListener('click', function(event) {
 
 document.querySelectorAll('.context-menu button').forEach(button => {
     button.addEventListener('click', function(event) {
-        if (event.target.parentElement.getAttribute("choice-id") === "3") {
-            textHighlighcolorPicker.click();
-        } else {
-            // Ajoutez ici les callbacks pour les autres boutons si nécessaire
-            console.log(`Action: ${event.target.title}`);
+
+        switch(event.target.parentElement.getAttribute("choice-id")){
+            case "4":
+                insertAroundSelection(overlayEditor,"<strong>","</strong>");
+                event.target.parentElement.display = 'none';
+                break;
+            case "3":
+                contextMenuColorPickerContainer.style.display = "block";
+                break;
+            case "2":
+                insertAroundSelection(overlayEditor,"<div style='text-align: right;'>","</div>");
+                event.target.parentElement.display = 'none';
+                break;
+            case "1":
+                insertAroundSelection(overlayEditor,"<div style='text-align: center;'>","</div>");
+                event.target.parentElement.display = 'none';
+                break;
+            case "0":
+                insertAroundSelection(overlayEditor,"<div style='text-align: left;'>","</div>");
+                event.target.parentElement.display = 'none';
+                break;
         }
+
+
+        // trigger input event on editor to update the rest of the page
+        const inputEvent = new Event('input', {
+            bubbles: false,
+        });
+        overlayEditor.dispatchEvent(inputEvent);
+
+
     });
 });
 
-textHighlighcolorPicker.addEventListener('input', function(event) {
-    const color = event.target.value;
+textHighlighcolorPickerSubmitButton.addEventListener('click', function(event) {
+    const color = textHighlighcolorPicker.value;
     console.log(color);
     insertAroundSelection(overlayEditor,`<font color="${color}">`,"</font>");
+    contextMenuColorPickerContainer.style.display = "none";
     contextMenu.style.display = 'none';
 });

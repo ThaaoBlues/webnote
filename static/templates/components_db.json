@@ -10,5 +10,8 @@
     },
     "images":{
         "basic":"basic.html"
+    },
+    "separators":{
+        "horizontal":"hr.html"
     }
 }

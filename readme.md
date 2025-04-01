@@ -4,16 +4,15 @@ Litte markdown note taking and drawing website, made in 30s using mistral+chatgp
 It has bugs and is hideous but it kind of works. For 10min of prompting an AI it is fair enough x')
 
 ## features
-- PDF-to-Markdown OCR (coming soon) to edit pdf files as you wish
+- PDF-to-Markdown (coming one day) to edit pdf files as you wish
 - quick handwriting to svg image in your markdown file
 - export to pdf (buggy)
 - support of html tags
-
+- support of latex
 
 
 TOUDOU :
 - fix le cassage des \llbracket et \rrbracket
-- ne pas recompiler le mathjax à chaque char tapé, essayer de trouver une combine
 - utilise le modèle d'ocr ou un llvm pour changer les images svg à la main en truc propre ?
 - connect an svg marketplace to import cool drawings available on internet
 - mettre un lien vers geogebra
