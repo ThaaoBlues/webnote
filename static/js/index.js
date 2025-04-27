@@ -45,8 +45,32 @@ window.addEventListener("DOMContentLoaded",function(){
 
     updateMarkdownOutput();
 
+    initOpenWorkspaceButton();
+
 
 })
+
+
+function initOpenWorkspaceButton(){
+    document.getElementById("uploadMarkdown").addEventListener("click",(e)=>{
+        listMarkdownFilesAndUpdateTabs(markdownInput);
+        syncOverlayEditor();
+    });
+
+}
+
+
+document.getElementById('addTabButton').addEventListener('click', async () => {
+    await createNewFileAndAddTab();
+});
+
+
+
+/*
+
+Drawing shit
+
+*/
 let isDrawing = false;
 let isErasing = false;
 let isPanning = false;
@@ -64,7 +88,7 @@ drawingCanvas.width = canvasWidth;
 drawingCanvas.height = canvasHeight;
 drawingCanvas.style.cursor = 'crosshair';
 
-drawingCanvas.addEventListener('mousedown', (event) => {
+drawingCanvas.addEventListener('pointerdown', (event) => {
     if (event.button === 1) {
         isPanning = true;
         lastX = event.clientX;
@@ -75,7 +99,7 @@ drawingCanvas.addEventListener('mousedown', (event) => {
     }
 });
 
-drawingCanvas.addEventListener('mousemove', (event) => {
+drawingCanvas.addEventListener('pointermove', (event) => {
     if (isPanning) {
         event.preventDefault();
         let dx = event.clientX - lastX;
@@ -89,11 +113,11 @@ drawingCanvas.addEventListener('mousemove', (event) => {
     }
 });
 
-drawingCanvas.addEventListener('mouseup', () => {
+drawingCanvas.addEventListener('pointerup', () => {
     stopDrawing()
 });
 
-drawingCanvas.addEventListener('mouseout', () => {
+drawingCanvas.addEventListener('pointerout', () => {
     stopDrawing()
 });
 

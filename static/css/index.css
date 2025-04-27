@@ -235,3 +235,59 @@ body, html {
 #textHighlighcolorPickerSubmitButton{
     border: 1px solid #000;
 }
+
+
+.workspace-tabs-container{
+    display: flex;
+    flex-direction: row;
+    bottom: 2px;
+    position: fixed;
+    width: fit-content;
+    background-color: wheat;
+    border-radius: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.workspace-tab{
+    width: fit-content;
+    height: fit-content;
+    background-color:#888;
+    border-radius: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: larger;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 10px;
+}
+
+.workspace-tab h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.workspace-tab:hover{
+    background-color: #007BFF;
+}
+
+.workspace-tab.selected {
+    background-color: #f0f0f0;
+}
+.add-tab-button {
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #e0e0e0;
+    text-align: center;
+    margin: auto;
+    margin-bottom: auto;
+    height: fit-content;
+    font-size: larger;
+    font-weight: bolder;
+    padding: 5px;
+}
+
+#workspaceTabsContainer{
+    display: flex;
+    flex-direction: row;
+}

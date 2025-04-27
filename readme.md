@@ -12,8 +12,7 @@ It has bugs and is hideous but it kind of works. For 10min of prompting an AI it
 
 
 TOUDOU :
-- fix le cassage des \llbracket et \rrbracket
-- utilise le modèle d'ocr ou un llvm pour changer les images svg à la main en truc propre ?
+- fix le fait que la fonction writeFile fasse refresh la page
 - connect an svg marketplace to import cool drawings available on internet
 - mettre un lien vers geogebra
 - ability to import svg files
