@@ -71,10 +71,14 @@ async function writeFile(directoryHandle, fileHandle, newContent) {
         const currentContent = await currentFile.text();
 
         if (currentContent !== newContent) {
-            const writable = await fileHandle.createWritable({ keepExistingData: true });
-            await writable.write(newContent);
-            await writable.close();
-            console.log('File updated successfully.');
+            const writable = await fileHandle.createWritable({ keepExistingData: false});
+            try{
+                await writable.write(newContent);
+                console.log('File updated successfully.');
+
+            }finally{
+                await writable.close();
+            }
         } else {
             console.log('No changes detected, skipping file write.');
         }
@@ -157,21 +161,21 @@ async function createNewFileAndAddTab() {
         const tab = createTab(fileHandle);
         tab.addEventListener("click", async (e) => {
             try {
-                console.log("Tab clicked:", entry.name || fileHandle.name);
+                console.log("Tab clicked:", fileName);
         
                 if (currentFileContent !== '' && lastSelectedFileHandle) {
                     console.log("Saving file:", lastSelectedFileHandle.name);
-                    await writeFile(directoryHandle, lastSelectedFileHandle.name, currentFileContent);
+                    await writeFile(directoryHandle, lastSelectedFileHandle, currentFileContent);
                 }
         
-                console.log("Reading file:", entry.name || fileHandle.name);
-                currentFileContent = await readFile(entry || fileHandle);
+                console.log("Reading file:", fileName );
+                currentFileContent = await readFile(fileHandle);
         
                 markdownInput.value = currentFileContent;
                 syncOverlayEditor();
                 updateMarkdownOutput();
         
-                lastSelectedFileHandle = entry || fileHandle;
+                lastSelectedFileHandle = fileHandle;
             } catch (error) {
                 console.error("Error during tab click handling:", error);
                 alert("An error occurred. See console for details.");
@@ -238,3 +242,8 @@ async function test(){
 }
 
 
+window.addEventListener('beforeunload', (event) => {
+    console.warn('>> Page is about to unload or reload.');
+    event.preventDefault();
+    event.returnValue = ''; // Pour certains navigateurs (alerte de confirmation)
+});

@@ -1,7 +1,8 @@
 {
     
     "tables":{
-        "basic":"basic.html"
+        "basic":"basic.html",
+        "basic row":"basic_row.html"
     },
     "text":{
         "parapgraph":"paragraph.html",

@@ -236,7 +236,10 @@ function updateMarkdownOutput(renderLatex=true) {
     // Render MathJax
     MathJax.typesetPromise([markdownOutput]).catch((err) => console.log('Typeset failed:', err));
 
-
+    // start to update the file content on disk (non blocking)
+    if(globalDirectoryHandle){
+        writeFile(globalDirectoryHandle, lastSelectedFileHandle, markdownInput.value);
+    }
 }
 
 
@@ -611,7 +614,7 @@ async function fetchComponent(url) {
         const response = await fetch(url);
         if (response.ok) {
             const content = await response.text();
-            markdownInput.value += '\n\n' + content;
+            markdownInput.value += content
             updateMarkdownOutput();
             syncOverlayEditor();
         } else {
@@ -742,7 +745,7 @@ function initOverlayEditor(){
 
 
 
-function insertAroundSelection(myField, addBeforeSelection,addAfterSelection) {
+function insertAroundSelection(addBeforeSelection,addAfterSelection) {
     const selection = window.getSelection();
     const range = selection.getRangeAt(0);
 
@@ -794,22 +797,22 @@ document.querySelectorAll('.context-menu button').forEach(button => {
 
         switch(event.target.parentElement.getAttribute("choice-id")){
             case "4":
-                insertAroundSelection(overlayEditor,"<strong>","</strong>");
+                insertAroundSelection("<strong>","</strong>");
                 event.target.parentElement.display = 'none';
                 break;
             case "3":
                 contextMenuColorPickerContainer.style.display = "block";
                 break;
             case "2":
-                insertAroundSelection(overlayEditor,"<div style='text-align: right;'>","</div>");
+                insertAroundSelection("<div style='text-align: right;'>","</div>");
                 event.target.parentElement.display = 'none';
                 break;
             case "1":
-                insertAroundSelection(overlayEditor,"<div style='text-align: center;'>","</div>");
+                insertAroundSelection("<div style='text-align: center;'>","</div>");
                 event.target.parentElement.display = 'none';
                 break;
             case "0":
-                insertAroundSelection(overlayEditor,"<div style='text-align: left;'>","</div>");
+                insertAroundSelection("<div style='text-align: left;'>","</div>");
                 event.target.parentElement.display = 'none';
                 break;
         }
@@ -828,7 +831,7 @@ document.querySelectorAll('.context-menu button').forEach(button => {
 textHighlighcolorPickerSubmitButton.addEventListener('click', function(event) {
     const color = textHighlighcolorPicker.value;
     console.log(color);
-    insertAroundSelection(overlayEditor,`<font color="${color}">`,"</font>");
+    insertAroundSelection(`<font color="${color}">`,"</font>");
     contextMenuColorPickerContainer.style.display = "none";
     contextMenu.style.display = 'none';
 });
