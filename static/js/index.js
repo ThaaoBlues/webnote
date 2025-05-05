@@ -16,7 +16,7 @@ const svgEditor = document.querySelector('.svg-editor');
 const overlayEditor = document.getElementById('interactiveEditor');
 
 
-
+drawingMode = 'free';
 
 // first render with default markdown sheet
 window.addEventListener("DOMContentLoaded",function(){
@@ -180,29 +180,58 @@ function startDrawing(event) {
     isDrawing = true;
     currentPath = [];
     const { x, y } = getCanvasCoords(event);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+    startPoint = { x, y }; // Store the starting point
     ctx.strokeStyle = isErasing ? '#ffffff' : currentColor;
     ctx.lineWidth = currentRadius;
     ctx.lineCap = 'round';
     currentPath.push({ x, y, type: 'move', color: ctx.strokeStyle, radius: ctx.lineWidth });
+
+    if (drawingMode === 'free') {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
 }
 
 function draw(event) {
     if (!isDrawing) return;
     const { x, y } = getCanvasCoords(event);
-    ctx.globalCompositeOperation = isErasing ? 'destination-out' : 'source-over';
-    ctx.lineWidth = isErasing ? currentRadius * 2 : currentRadius;
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    currentPath.push({ x, y, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
+
+    if (drawingMode === 'free') {
+        ctx.globalCompositeOperation = isErasing ? 'destination-out' : 'source-over';
+        ctx.lineWidth = isErasing ? currentRadius * 2 : currentRadius;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        currentPath.push({ x, y, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
+    } else if (drawingMode === 'line') {
+        // Update the current path with the new point, but do not draw yet
+        currentPath.push({ x, y, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
+    }
 }
 
 function stopDrawing() {
+    if (!isDrawing) return;
     isDrawing = false;
+
+    if (drawingMode === 'line') {
+        const { x: endX, y: endY } = currentPath[currentPath.length - 1];
+
+        // Draw the line from the start point to the end point
+        ctx.beginPath();
+        ctx.moveTo(startPoint.x, startPoint.y);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.closePath();
+    } else if (drawingMode === 'free') {
+        ctx.closePath();
+    }
+
     paths.push(currentPath);
-    ctx.closePath();
     ctx.globalCompositeOperation = 'source-over';
+}
+
+// Function to toggle drawing mode
+function toggleDrawingMode(mode) {
+    drawingMode = mode;
 }
 
 function updateMarkdownOutput(renderLatex=true) {
@@ -311,6 +340,20 @@ downloadPDF.addEventListener('click', () => {
     
 });
 
+
+
+document.getElementById("drawLineButton").addEventListener("click",(e)=>{
+    document.getElementById("freeDrawButton").removeAttribute("disabled");
+    e.target.setAttribute("disabled",true);
+    toggleDrawingMode('line');
+});
+
+document.getElementById("freeDrawButton").addEventListener("click",(e)=>{
+    document.getElementById("drawLineButton").removeAttribute("disabled");
+    e.target.setAttribute("disabled",true);
+
+    toggleDrawingMode('free');
+});
 
 /* zoom sur l'éditeur quand on écris/dessine */
 
@@ -615,8 +658,9 @@ async function fetchComponent(url) {
         if (response.ok) {
             const content = await response.text();
             markdownInput.value += content
+            overlayEditor.textContent += content
             updateMarkdownOutput();
-            syncOverlayEditor();
+            //syncOverlayEditor();
         } else {
             console.error('Failed to fetch component:', response.statusText);
         }
