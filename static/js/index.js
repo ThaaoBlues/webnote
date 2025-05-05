@@ -153,6 +153,9 @@ expandCanvasButton.addEventListener('click', () => {
     redrawPaths();
 });
 
+
+let temporaryLine;
+
 // re-affiche le svg apres aggrandissement du canvas
 function redrawPaths() {
     ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
@@ -203,8 +206,20 @@ function draw(event) {
         ctx.stroke();
         currentPath.push({ x, y, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
     } else if (drawingMode === 'line') {
-        // Update the current path with the new point, but do not draw yet
-        currentPath.push({ x, y, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
+        // Clear the previous temporary line
+        if (temporaryLine) {
+            ctx.putImageData(temporaryLine, 0, 0);
+        }
+
+        // Save the current canvas state
+        temporaryLine = ctx.getImageData(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+        // Draw the temporary line
+        ctx.beginPath();
+        ctx.moveTo(startPoint.x, startPoint.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.closePath();
     }
 }
 
@@ -213,14 +228,22 @@ function stopDrawing() {
     isDrawing = false;
 
     if (drawingMode === 'line') {
-        const { x: endX, y: endY } = currentPath[currentPath.length - 1];
+        const { x: endX, y: endY } = getCanvasCoords(event);
 
-        // Draw the line from the start point to the end point
+        // Clear the temporary line
+        if (temporaryLine) {
+            ctx.putImageData(temporaryLine, 0, 0);
+            temporaryLine = null;
+        }
+
+        // Draw the final line
         ctx.beginPath();
         ctx.moveTo(startPoint.x, startPoint.y);
         ctx.lineTo(endX, endY);
         ctx.stroke();
         ctx.closePath();
+
+        currentPath.push({ x: endX, y: endY, type: 'line', color: ctx.strokeStyle, radius: ctx.lineWidth });
     } else if (drawingMode === 'free') {
         ctx.closePath();
     }
