@@ -423,6 +423,10 @@ document.addEventListener('keydown',(event)=>{
         console.log("displaying drawing canvas");
         hideMarkdownEditor();
         displayDrawingCanvas();
+    }else if(event.shiftKey && event.altKey && (svgEditor.style.display !== "none")){
+        console.log("hiding drawing canvas");
+        hideDrawingCanvas();
+        displayMarkdownEditor();
     }
 });
 
